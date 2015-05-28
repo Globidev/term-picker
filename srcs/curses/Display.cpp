@@ -5,14 +5,15 @@
 namespace curses {
 
     Display::Display() {
-        initscr();
+        setupTerm();
         noecho();
         keypad(stdscr, 1);
         curs_set(0);
     }
 
     Display::~Display() {
-        endwin();
+        if (!isendwin())
+            quit();
     }
 
     Display & Display::instance() {
@@ -31,12 +32,30 @@ namespace curses {
         refresh();
     }
 
+    void Display::quit() {
+        auto & self = instance();
+
+        endwin();
+        delscreen(self.screen_);
+    }
+
     void Display::showItem(const Item & item, bool current) const {
         auto line = std::string(item.level * 3, ' ') + "|--" + item.name + "\n";
         if (current || item.selected)
             attron(A_REVERSE);
         printw(line.c_str());
         attroff(A_REVERSE);
+    }
+
+    void Display::setupTerm() {
+        outFile = stdout;
+        inFile = stdin;
+        if (!isatty(fileno(outFile)))
+            outFile = fopen("/dev/tty", "w");
+        if (!isatty(fileno(inFile)))
+            inFile = fopen("/dev/tty", "r");
+
+        screen_ = newterm(nullptr, outFile, inFile);
     }
 
 }
