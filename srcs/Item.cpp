@@ -1,5 +1,7 @@
 #include "Item.hpp"
 
+#include "options/Options.hpp"
+
 Item::Item(const std::string & name, boost::optional<Parent> parent):
     name     { name },
     selected { false },
@@ -16,4 +18,15 @@ Item & Item::operator[](const std::string & name) {
 
     auto inserted = childMap.emplace(name, Item { name, *this });
     return inserted.first->second;
+}
+
+std::ostream & operator<<(std::ostream & os, const Item & item) {
+    if (Options::tail)
+        os << item.name;
+    else {
+        if (item.parent)
+            os << *item.parent << '/';
+        os << item.name;
+    }
+    return os;
 }

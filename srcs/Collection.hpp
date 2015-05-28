@@ -16,6 +16,7 @@ struct Collection {
     void next();
     void select();
     void expand();
+    void show();
 
 private:
 

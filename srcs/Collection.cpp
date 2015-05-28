@@ -49,6 +49,12 @@ void Collection::expand() {
         setVisible(childPair.second, current().expanded);
 }
 
+void Collection::show() {
+    for (const auto & item: items_)
+        if (item.get().selected)
+            std::cout << item << std::endl;
+}
+
 Item & Collection::current() {
     return *currentIt_;
 }

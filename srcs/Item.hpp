@@ -9,6 +9,8 @@ struct Item {
 
     Item & operator[](const std::string &);
 
+    friend std::ostream & operator<<(std::ostream &, const Item &);
+
     std::string name;
     bool selected;
     bool expanded;
