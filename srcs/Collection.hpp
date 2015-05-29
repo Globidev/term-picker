@@ -10,7 +10,7 @@ struct Collection {
     Collection();
 
     const Items & items() const;
-    bool isCurrent(const Item &) const;
+    Items::size_type currentIndex() const;
 
     void prev();
     void next();
@@ -29,6 +29,6 @@ private:
 
     ItemMap itemMap_;
     Items items_;
-    Items::iterator currentIt_;
+    Items::size_type currentIdx_;
 
 };

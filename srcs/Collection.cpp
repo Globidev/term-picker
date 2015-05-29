@@ -2,7 +2,8 @@
 
 #include "options/Options.hpp"
 
-Collection::Collection() {
+Collection::Collection():
+    currentIdx_ { 0 } {
     // Build map
     for (const auto & itemName: Options::items)
         addItem(itemName);
@@ -10,32 +11,28 @@ Collection::Collection() {
     // Build vector
     for (auto & itemPair: itemMap_)
         flatten(itemPair.second);
-
-    currentIt_ = items_.begin();
 }
 
 const Collection::Items & Collection::items() const {
     return items_;
 }
 
-bool Collection::isCurrent(const Item & item) const {
-    return &item == &currentIt_->get();
+Collection::Items::size_type Collection::currentIndex() const {
+    return currentIdx_;
 }
 
 void Collection::prev() {
     do {
-        if (currentIt_ == items_.begin())
-            currentIt_ = std::prev(items_.end());
+        if (currentIdx_ == 0)
+            currentIdx_ = items_.size() - 1;
         else
-            --currentIt_;
+            --currentIdx_;
     } while (!current().visible);
 }
 
 void Collection::next() {
     do {
-        ++currentIt_;
-        if (currentIt_ == items_.end())
-            currentIt_ = items_.begin();
+        currentIdx_ = (currentIdx_ + 1) % items_.size();
     } while (!current().visible);
 }
 
@@ -56,7 +53,7 @@ void Collection::show() {
 }
 
 Item & Collection::current() {
-    return *currentIt_;
+    return items_.at(currentIdx_);
 }
 
 void Collection::addItem(const std::string & name) {

@@ -34,8 +34,7 @@ void Application::run() {
     while (running) {
         curses::Display::show(collection);
 
-        int c = getch();
-        switch (c) {
+        switch (getch()) {
             case 'q':       quit();                 break;
             case ' ':
             case '\n':      select();               break;

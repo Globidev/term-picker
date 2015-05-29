@@ -24,10 +24,23 @@ namespace curses {
     void Display::show(const Collection & collection) {
         auto & self = instance();
 
+        int height,_;
+        getmaxyx(stdscr, height, _);
+        int currentIndex = collection.currentIndex();
+        int displayedIndex = 0;
+        for (int i = 0; i < currentIndex; ++i)
+            displayedIndex += collection.items()[i].get().visible;
+
         clear();
-        for (const auto & item: collection.items()) {
-            if (item.get().visible)
-                self.showItem(item, collection.isCurrent(item));
+        int start = std::max(0, displayedIndex - height + 1);
+        int maxSize = collection.items().size();
+        int printed = 0;
+        for (int i = start; printed < height && i < maxSize; ++i) {
+            auto item = collection.items()[i].get();
+            if (item.visible) {
+                self.showItem(item, i == currentIndex);
+                ++printed;
+            }
         }
         refresh();
     }
@@ -44,7 +57,8 @@ namespace curses {
         if (current || item.selected)
             attron(A_REVERSE);
         printw(line.c_str());
-        attroff(A_REVERSE);
+        if (current || item.selected)
+            attroff(A_REVERSE);
     }
 
     void Display::setupTerm() {
