@@ -62,12 +62,9 @@ namespace curses {
     }
 
     void Display::setupTerm() {
-        outFile = stdout;
-        inFile = stdin;
-        if (!isatty(fileno(outFile)))
-            outFile = fopen("/dev/tty", "w");
-        if (!isatty(fileno(inFile)))
-            inFile = fopen("/dev/tty", "r");
+        // outFile = stdout;
+        outFile = fopen(ttyname(STDOUT_FILENO), "w");
+        inFile = fopen(ttyname(STDIN_FILENO), "r");
 
         screen_ = newterm(getenv("TERM"), outFile, inFile);
     }
