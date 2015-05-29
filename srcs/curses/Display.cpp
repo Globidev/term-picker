@@ -69,7 +69,7 @@ namespace curses {
         if (!isatty(fileno(inFile)))
             inFile = fopen("/dev/tty", "r");
 
-        screen_ = newterm(nullptr, outFile, inFile);
+        screen_ = newterm(getenv("TERM"), outFile, inFile);
     }
 
 }
