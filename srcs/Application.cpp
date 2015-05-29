@@ -7,6 +7,11 @@
 #include "Collection.hpp"
 
 Application::Application(int argc, char **argv) {
+    if (argc < 2) {
+        std::cerr << "Nothing to pick" << std::endl;
+        exit(1);
+    }
+
     Options::parseFromCommandLine(argc, argv);
 }
 
