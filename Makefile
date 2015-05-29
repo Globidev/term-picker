@@ -1,9 +1,9 @@
-NAME			=	term_picker
+NAME			=	term-picker
 
 rwildcard		=	$(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) \
 					$(filter $(subst *,%,$2),$d))
 
-COMPILER		=	clang++
+COMPILER		=	g++
 
 PCH				=	srcs/stdafx.hpp
 PCH_SUFFIX		=	.gch
@@ -12,10 +12,9 @@ PCH_TARGET		=	$(PCH_DIR)$(PCH_SUFFIX)/pch
 PCH_FLAG		=	-include $(PCH_DIR)
 PCH_IGN_FLAGS	=	-Wno-unused-parameter
 
-INCLUDE_DIRS	=	./srcs \
-					$(HOME)/.brew/Cellar/boost/1.58.0/include
+INCLUDE_DIRS	=	./srcs
 
-LIB_DIRS		=	$(HOME)/.brew/Cellar/boost/1.58.0/lib
+LIB_DIRS		=
 LIB_NAMES		=	boost_program_options ncurses
 
 CFLAGS			=	-Wall -Wextra -Werror -std=c++1z -O3 \
