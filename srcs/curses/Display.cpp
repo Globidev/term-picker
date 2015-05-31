@@ -4,7 +4,9 @@
 
 namespace curses {
 
-    Display::Display() {
+    Display::Display():
+        lowerBound { 0 } {
+
         setupTerm();
         noecho();
         keypad(stdscr, 1);
@@ -24,21 +26,22 @@ namespace curses {
     void Display::show(const Collection & collection) {
         auto & self = instance();
 
-        int height,_;
-        getmaxyx(stdscr, height, _);
         int currentIndex = collection.currentIndex();
         int displayedIndex = 0;
         for (int i = 0; i < currentIndex; ++i)
             displayedIndex += collection.items()[i].get().visible;
 
         clear();
-        int start = std::max(0, displayedIndex - height + 1);
+        if (displayedIndex >= self.lowerBound + self.height)
+            self.lowerBound = displayedIndex - self.height + 1;
+        else if (displayedIndex < self.lowerBound)
+            self.lowerBound = displayedIndex;
         int maxSize = collection.items().size();
         int printed = 0;
-        for (int i = start; printed < height && i < maxSize; ++i) {
+        for (int i = self.lowerBound; printed < self.height && i < maxSize; ++i) {
             auto item = collection.items()[i].get();
             if (item.visible) {
-                self.showItem(item, i == currentIndex);
+                showItem(item, i == currentIndex);
                 ++printed;
             }
         }
@@ -46,13 +49,16 @@ namespace curses {
     }
 
     void Display::quit() {
-        auto & self = instance();
-
         endwin();
-        delscreen(self.screen_);
+        delscreen(instance().screen_);
     }
 
-    void Display::showItem(const Item & item, bool current) const {
+    void Display::updateHeight() {
+        int _;
+        getmaxyx(stdscr, height, _);
+    }
+
+    void Display::showItem(const Item & item, bool current) {
         auto line = std::string(item.level * 3, ' ') + "|--" + item.name + "\n";
         if (current || item.selected)
             attron(A_REVERSE);
@@ -62,11 +68,11 @@ namespace curses {
     }
 
     void Display::setupTerm() {
-        // outFile = stdout;
-        outFile = fopen(ttyname(STDOUT_FILENO), "w");
-        inFile = fopen(ttyname(STDIN_FILENO), "r");
+        outFile = isatty(STDOUT_FILENO) ? stdout : fopen("/dev/tty", "w");
+        inFile = isatty(STDIN_FILENO) ? stdin : fopen("/dev/tty", "r");
 
-        screen_ = newterm(getenv("TERM"), outFile, inFile);
+        screen_ = newterm(nullptr, outFile, inFile);
+        updateHeight();
     }
 
 }

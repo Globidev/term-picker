@@ -14,15 +14,19 @@ namespace curses {
         static void show(const Collection &);
         static void quit();
 
+        void updateHeight();
+
     private:
 
         Display();
 
         void setupTerm();
-        void showItem(const Item &, bool current) const;
+        static void showItem(const Item &, bool current);
 
         SCREEN *screen_;
         FILE *outFile, *inFile;
+
+        int lowerBound, height;
 
     };
 
