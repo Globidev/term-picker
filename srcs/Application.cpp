@@ -35,13 +35,14 @@ void Application::run() {
         curses::Display::show(collection);
 
         switch (getch()) {
-            case 'q':       quit();                 break;
+            case 'q':       quit();                         break;
             case ' ':
-            case '\n':      select();               break;
-            case KEY_UP:    collection.prev();      break;
-            case KEY_DOWN:  collection.next();      break;
-            case KEY_RIGHT: collection.expand();    break;
-            default:                                break;
+            case '\n':       select();                      break;
+            case KEY_UP:     collection.prev();             break;
+            case KEY_DOWN:   collection.next();             break;
+            case KEY_RIGHT:  collection.expand();           break;
+            case 'e':        collection.expandRecursive();  break;
+            default:                                        break;
         }
 
     }

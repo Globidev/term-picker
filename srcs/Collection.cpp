@@ -46,6 +46,18 @@ void Collection::expand() {
         setVisible(childPair.second, current().expanded);
 }
 
+void Collection::expandRecursive() {
+    expandFromNode(current(), !current().expanded);
+    for (auto & childPair: current().childMap)
+        setVisible(childPair.second, current().expanded);
+}
+
+void Collection::expandFromNode(Item & item, bool expanded) {
+    item.expanded = expanded;
+    for (auto & childPair: item.childMap)
+        expandFromNode(childPair.second, expanded);
+}
+
 void Collection::show() {
     for (const auto & item: items_)
         if (item.get().selected)

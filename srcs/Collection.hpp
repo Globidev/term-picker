@@ -16,6 +16,7 @@ struct Collection {
     void next();
     void select();
     void expand();
+    void expandRecursive();
     void show();
 
 private:
@@ -26,6 +27,7 @@ private:
     void flatten(Item &);
 
     void setVisible(Item &, bool);
+    void expandFromNode(Item &, bool);
 
     ItemMap itemMap_;
     Items items_;
