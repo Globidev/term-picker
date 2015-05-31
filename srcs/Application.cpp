@@ -31,6 +31,10 @@ void Application::run() {
             quit();
     };
 
+    auto resize = [] {
+        curses::Display::instance().updateHeight();
+    };
+
     while (running) {
         curses::Display::show(collection);
 
@@ -42,6 +46,7 @@ void Application::run() {
             case KEY_DOWN:   collection.next();             break;
             case KEY_RIGHT:  collection.expand();           break;
             case 'e':        collection.expandRecursive();  break;
+            case KEY_RESIZE: resize();                      break;
             default:                                        break;
         }
 
