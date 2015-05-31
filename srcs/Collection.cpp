@@ -79,8 +79,9 @@ void Collection::execute() {
                     nullptr
                 };
                 execvp(Options::command.c_str(), const_cast<char **>(args));
-                std::cerr << "Error executing " << Options::command << "\n";
+                std::cerr << "Error executing " << Options::command << ": ";
                 perror(nullptr);
+                exit(1);
             }
             else
                 waitpid(pid, nullptr, 0);
