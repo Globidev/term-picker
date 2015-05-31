@@ -64,6 +64,29 @@ void Collection::show() {
             std::cout << item << std::endl;
 }
 
+void Collection::execute() {
+    for (const auto & item: items_)
+        if (item.get().selected) {
+            auto pid = fork();
+            if (pid == -1)
+                perror(nullptr);
+            else if (pid == 0) {
+                std::ostringstream oss;
+                oss << item;
+                char * const args[3] = {
+                    (char *)Options::command.c_str(),
+                    (char *)oss.str().c_str(),
+                    nullptr
+                };
+                execvp(Options::command.c_str(), args);
+                std::cerr << "Error executing " << Options::command << "\n";
+                perror(nullptr);
+            }
+            else
+                waitpid(pid, nullptr, 0);
+        }
+}
+
 Item & Collection::current() {
     return items_.at(currentIdx_);
 }

@@ -19,6 +19,8 @@ struct Collection {
     void expandRecursive();
     void show();
 
+    void execute();
+
 private:
 
     Item & current();

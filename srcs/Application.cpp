@@ -23,6 +23,8 @@ void Application::run() {
         curses::Display::quit();
         if (!Options::no_echo)
             collection.show();
+        if (!Options::command.empty())
+            collection.execute();
         running = false;
     };
 

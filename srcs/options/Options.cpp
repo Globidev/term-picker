@@ -4,6 +4,7 @@ std::vector<std::string>    Options::items   { };
 bool                        Options::tail    { false };
 bool                        Options::single  { false };
 bool                        Options::no_echo { false };
+std::string                 Options::command { "" };
 
 static auto getUsage(void) {
     po::options_description usage { "Available options" };
@@ -18,6 +19,8 @@ static auto getUsage(void) {
                         "Ends the program on the first selection")
         ("no-echo",     po::bool_switch(&Options::no_echo),
                         "Do not output selected items")
+        ("command,c",   po::value(&Options::command),
+                        "Command to execute for each selected item")
     ;
 
     return usage;
