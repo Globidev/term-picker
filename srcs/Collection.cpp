@@ -73,12 +73,12 @@ void Collection::execute() {
             else if (pid == 0) {
                 std::ostringstream oss;
                 oss << item;
-                char * const args[3] = {
-                    (char *)Options::command.c_str(),
-                    (char *)oss.str().c_str(),
+                const char * const args[3] = {
+                    Options::command.c_str(),
+                    oss.str().c_str(),
                     nullptr
                 };
-                execvp(Options::command.c_str(), args);
+                execvp(Options::command.c_str(), const_cast<char **>(args));
                 std::cerr << "Error executing " << Options::command << "\n";
                 perror(nullptr);
             }
