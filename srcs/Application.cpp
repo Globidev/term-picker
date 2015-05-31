@@ -21,7 +21,8 @@ void Application::run() {
 
     auto quit = [&] {
         curses::Display::quit();
-        collection.show();
+        if (!Options::no_echo)
+            collection.show();
         running = false;
     };
 
@@ -39,7 +40,7 @@ void Application::run() {
         curses::Display::show(collection);
 
         switch (getch()) {
-            case 'q':       quit();                         break;
+            case 'q':        quit();                        break;
             case ' ':
             case '\n':       select();                      break;
             case KEY_UP:     collection.prev();             break;

@@ -1,8 +1,9 @@
 #include "Options.hpp"
 
-std::vector<std::string>    Options::items  { };
-bool                        Options::tail   { false };
-bool                        Options::single { false };
+std::vector<std::string>    Options::items   { };
+bool                        Options::tail    { false };
+bool                        Options::single  { false };
+bool                        Options::no_echo { false };
 
 static auto getUsage(void) {
     po::options_description usage { "Available options" };
@@ -15,6 +16,8 @@ static auto getUsage(void) {
                         "Only display the tail of the item")
         ("single,s",    po::bool_switch(&Options::single),
                         "Ends the program on the first selection")
+        ("no-echo",     po::bool_switch(&Options::no_echo),
+                        "Do not output selected items")
     ;
 
     return usage;
