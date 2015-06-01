@@ -111,7 +111,12 @@ void Collection::addItem(const std::string & name) {
     bool parseOK = qi::parse(
         first,
         last,
-        (qi::as_string[*(qi::char_ - '/')] % '/')[onParsed]
+        (
+                qi::as_string[
+                    *(qi::char_ - Options::separator)
+                ]
+            %   Options::separator
+        )[onParsed]
     );
     (void)parseOK;
 }

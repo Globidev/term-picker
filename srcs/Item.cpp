@@ -25,7 +25,7 @@ std::ostream & operator<<(std::ostream & os, const Item & item) {
         os << item.name;
     else {
         if (item.parent)
-            os << *item.parent << '/';
+            os << *item.parent << Options::separator;
         os << item.name;
     }
     return os;

@@ -7,6 +7,7 @@ struct Options {
     static bool                     single;
     static bool                     no_echo;
     static std::string              command;
+    static char                     separator;
 
     static void parseFromCommandLine(int, char **);
 

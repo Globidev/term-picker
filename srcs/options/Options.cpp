@@ -1,10 +1,11 @@
 #include "Options.hpp"
 
-std::vector<std::string>    Options::items   { };
-bool                        Options::tail    { false };
-bool                        Options::single  { false };
-bool                        Options::no_echo { false };
-std::string                 Options::command { "" };
+std::vector<std::string>    Options::items      { };
+bool                        Options::tail       { false };
+bool                        Options::single     { false };
+bool                        Options::no_echo    { false };
+std::string                 Options::command    { "" };
+char                        Options::separator  { '/' };
 
 static auto getUsage(void) {
     po::options_description usage { "Available options" };
@@ -21,6 +22,8 @@ static auto getUsage(void) {
                         "Do not output selected items")
         ("command,c",   po::value(&Options::command),
                         "Command to execute for each selected item")
+        ("separator",   po::value(&Options::separator),
+                        "The character used to split items into a tree")
     ;
 
     return usage;
