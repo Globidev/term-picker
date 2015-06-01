@@ -2,21 +2,45 @@
 
 struct Item {
 
-    using ChildMap = std::map<std::string, Item>;
-    using Parent = Item &;
+    using ChildMap = std::map<std::string, std::shared_ptr<Item>>;
+    using Parent = boost::optional<Item &>;
 
-    Item(const std::string &, boost::optional<Parent> = boost::none);
+    Item(const std::string &, Parent parent = boost::none);
+    Item(const Item &) = delete;
+    Item & operator=(const Item &) = delete;
 
-    Item & operator[](const std::string &);
+    const std::string & name() const;
+    bool isSelected() const;
+    bool isExpanded() const;
+    bool isVisible() const;
+    std::size_t level() const;
+    Parent parent() const;
+
+    void select();
+    void toggle();
+    void deepToggle();
+
+    std::shared_ptr<Item> operator[](const std::string &);
+
+    template <class F>
+    void forEachChild(F f) {
+        for (auto childPair: childMap_)
+            f(childPair.second);
+    }
 
     friend std::ostream & operator<<(std::ostream &, const Item &);
 
-    std::string name;
-    bool selected;
-    bool expanded;
-    bool visible;
-    std::size_t level;
-    boost::optional<Parent> parent;
+private:
 
-    ChildMap childMap;
+    void setVisible(bool);
+    void expand(bool);
+
+    std::string name_;
+    bool isSelected_;
+    bool isExpanded_;
+    bool isVisible_;
+    std::size_t level_;
+    Parent parent_;
+
+    ChildMap childMap_;
 };

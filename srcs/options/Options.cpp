@@ -3,7 +3,7 @@
 std::vector<std::string>    Options::items      { };
 bool                        Options::tail       { false };
 bool                        Options::multiple   { false };
-bool                        Options::no_echo    { false };
+bool                        Options::noEcho     { false };
 std::string                 Options::command    { "" };
 char                        Options::separator  { '/' };
 
@@ -18,7 +18,7 @@ static auto getUsage(void) {
                         "Only display the tail of the item")
         ("multiple,m",  po::bool_switch(&Options::multiple),
                         "Ends the program on the first selection")
-        ("no-echo",     po::bool_switch(&Options::no_echo),
+        ("no-echo",     po::bool_switch(&Options::noEcho),
                         "Do not output selected items")
         ("command,c",   po::value(&Options::command),
                         "Command to execute for each selected item")

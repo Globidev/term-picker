@@ -2,115 +2,61 @@
 
 #include "options/Options.hpp"
 
-Collection::Collection():
+Collection::Collection(const std::vector<std::string> & items):
     currentIdx_ { 0 } {
-    // Build map
-    for (const auto & itemName: Options::items)
+
+    for (const auto & itemName: items)
         addItem(itemName);
 
-    // Build vector
-    for (auto & itemPair: itemMap_)
-        flatten(itemPair.second);
+    using Push = std::function<void (std::shared_ptr<Item>)>;
+    Push push = [&](auto item) {
+        push_back(item);
+        item->forEachChild(push);
+    };
+
+    for (auto itemPair: topLevelItems_)
+        push(itemPair.second);
 }
 
-const Collection::Items & Collection::items() const {
-    return items_;
-}
-
-Collection::Items::size_type Collection::currentIndex() const {
+Collection::size_type Collection::currentIndex() const {
     return currentIdx_;
 }
 
-void Collection::prev() {
+Item & Collection::current() {
+    return *at(currentIdx_);
+}
+
+void Collection::previous() {
     do {
         if (currentIdx_ == 0)
-            currentIdx_ = items_.size() - 1;
+            currentIdx_ = size() - 1;
         else
             --currentIdx_;
-    } while (!current().visible);
+    } while (!current().isVisible());
 }
 
 void Collection::next() {
     do {
-        currentIdx_ = (currentIdx_ + 1) % items_.size();
-    } while (!current().visible);
-}
-
-void Collection::select() {
-    current().selected = !current().selected;
-}
-
-void Collection::expand() {
-    current().expanded = !current().expanded;
-    for (auto & childPair: current().childMap)
-        setVisible(childPair.second, current().expanded);
-}
-
-void Collection::expandRecursive() {
-    expandFromNode(current(), !current().expanded);
-    for (auto & childPair: current().childMap)
-        setVisible(childPair.second, current().expanded);
-}
-
-void Collection::expandFromNode(Item & item, bool expanded) {
-    item.expanded = expanded;
-    for (auto & childPair: item.childMap)
-        expandFromNode(childPair.second, expanded);
-}
-
-void Collection::show() {
-    for (const auto & item: items_)
-        if (item.get().selected)
-            std::cout << item << std::endl;
-}
-
-void Collection::execute() {
-    for (const auto & item: items_)
-        if (item.get().selected) {
-            auto pid = fork();
-            if (pid == -1)
-                perror(nullptr);
-            else if (pid == 0) {
-                std::ostringstream oss;
-                oss << item;
-                const char * const args[3] = {
-                    Options::command.c_str(),
-                    oss.str().c_str(),
-                    nullptr
-                };
-                execvp(Options::command.c_str(), const_cast<char **>(args));
-                std::cerr << "Error executing " << Options::command << ": ";
-                perror(nullptr);
-                exit(1);
-            }
-            else
-                waitpid(pid, nullptr, 0);
-        }
-}
-
-Item & Collection::current() {
-    return items_.at(currentIdx_);
+        currentIdx_ = (currentIdx_ + 1) % size();
+    } while (!current().isVisible());
 }
 
 void Collection::addItem(const std::string & name) {
-    auto first = name.begin();
-    auto last = name.end();
-
     auto onParsed = [this](const auto & components) {
-        auto inserted = itemMap_.emplace(
+        auto inserted = topLevelItems_.emplace(
             components.front(),
-            components.front()
+            std::make_shared<Item>(components.front())
         );
 
-        auto item = std::ref(inserted.first->second);
+        auto item = inserted.first->second;
         auto it = std::next(components.begin());
         for (; it != components.end(); ++it)
-            item = item.get()[*it];
+            item = (*item)[*it];
     };
 
-    bool parseOK = qi::parse(
-        first,
-        last,
+    qi::parse(
+        name.begin(),
+        name.end(),
         (
                 qi::as_string[
                     *(qi::char_ - Options::separator)
@@ -118,18 +64,4 @@ void Collection::addItem(const std::string & name) {
             %   Options::separator
         )[onParsed]
     );
-    (void)parseOK;
-}
-
-void Collection::flatten(Item & item) {
-    items_.emplace_back(item);
-
-    for (auto & childPair: item.childMap)
-        flatten(childPair.second);
-}
-
-void Collection::setVisible(Item & item, bool visible) {
-    item.visible = visible;
-    for (auto & childPair: item.childMap)
-        setVisible(childPair.second, item.expanded && visible);
 }

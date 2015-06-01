@@ -2,37 +2,23 @@
 
 #include "Item.hpp"
 
-struct Collection {
+struct Collection: public std::vector<std::shared_ptr<Item>> {
 
-    using ItemMap = std::map<std::string, Item>;
-    using Items = std::vector<std::reference_wrapper<Item>>;
+    using ItemMap = std::map<std::string, std::shared_ptr<Item>>;
 
-    Collection();
+    Collection(const std::vector<std::string> &);
 
-    const Items & items() const;
-    Items::size_type currentIndex() const;
+    size_type currentIndex() const;
+    Item & current();
 
-    void prev();
+    void previous();
     void next();
-    void select();
-    void expand();
-    void expandRecursive();
-
-    void show();
-    void execute();
 
 private:
 
-    Item & current();
-
     void addItem(const std::string &);
-    void flatten(Item &);
 
-    void setVisible(Item &, bool);
-    void expandFromNode(Item &, bool);
-
-    ItemMap itemMap_;
-    Items items_;
-    Items::size_type currentIdx_;
+    ItemMap topLevelItems_;
+    size_type currentIdx_;
 
 };

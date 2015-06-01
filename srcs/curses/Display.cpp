@@ -30,22 +30,24 @@ namespace curses {
         int currentIndex = collection.currentIndex();
         int displayedIndex = 0;
         for (int i = 0; i < currentIndex; ++i)
-            displayedIndex += collection.items()[i].get().visible;
-
-        clear();
+            displayedIndex += collection.at(i)->isVisible();
         if (displayedIndex >= self.lowerBound + self.height)
             self.lowerBound = displayedIndex - self.height + 1;
         else if (displayedIndex < self.lowerBound)
             self.lowerBound = displayedIndex;
-        int maxSize = collection.items().size();
+
+        clear();
+
+        int maxSize = collection.size();
         int printed = 0;
         for (int i = self.lowerBound; printed < self.height && i < maxSize; ++i) {
-            auto item = collection.items()[i].get();
-            if (item.visible) {
-                showItem(item, i == currentIndex);
+            auto item = collection.at(i);
+            if (item->isVisible()) {
+                showItem(*item, i == currentIndex);
                 ++printed;
             }
         }
+
         refresh();
     }
 
@@ -60,11 +62,11 @@ namespace curses {
     }
 
     void Display::showItem(const Item & item, bool current) {
-        auto line = std::string(item.level * 3, ' ') + "|--" + item.name + "\n";
-        if (current || item.selected)
+        auto line = std::string(item.level() * 3, ' ') + "|--" + item.name() + "\n";
+        if (current || item.isSelected())
             attron(A_REVERSE);
         printw(line.c_str());
-        if (current || item.selected)
+        if (current || item.isSelected())
             attroff(A_REVERSE);
     }
 
