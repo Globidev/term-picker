@@ -2,7 +2,7 @@
 
 std::vector<std::string>    Options::items      { };
 bool                        Options::tail       { false };
-bool                        Options::single     { false };
+bool                        Options::multiple   { false };
 bool                        Options::no_echo    { false };
 std::string                 Options::command    { "" };
 char                        Options::separator  { '/' };
@@ -16,13 +16,13 @@ static auto getUsage(void) {
                         "Items to pick")
         ("tail,t",      po::bool_switch(&Options::tail),
                         "Only display the tail of the item")
-        ("single,s",    po::bool_switch(&Options::single),
+        ("multiple,m",  po::bool_switch(&Options::multiple),
                         "Ends the program on the first selection")
         ("no-echo",     po::bool_switch(&Options::no_echo),
                         "Do not output selected items")
         ("command,c",   po::value(&Options::command),
                         "Command to execute for each selected item")
-        ("separator",   po::value(&Options::separator),
+        ("separator,s", po::value(&Options::separator),
                         "The character used to split items into a tree")
     ;
 

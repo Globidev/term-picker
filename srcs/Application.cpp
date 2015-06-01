@@ -30,7 +30,7 @@ void Application::run() {
 
     auto select = [&] {
         collection.select();
-        if (Options::single)
+        if (!Options::multiple)
             quit();
     };
 
