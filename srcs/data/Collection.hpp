@@ -17,8 +17,8 @@ struct Collection {
     void select();
     void expand();
     void expandRecursive();
-    void show();
 
+    void show();
     void execute();
 
 private:

@@ -1,6 +1,6 @@
 #include "Display.hpp"
 
-#include "Collection.hpp"
+#include "data/Collection.hpp"
 
 namespace curses {
 
@@ -8,6 +8,7 @@ namespace curses {
         lowerBound { 0 } {
 
         setupTerm();
+        raw();
         noecho();
         keypad(stdscr, 1);
         curs_set(0);

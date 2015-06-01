@@ -4,7 +4,7 @@
 
 #include "curses/Display.hpp"
 
-#include "Collection.hpp"
+#include "data/Collection.hpp"
 
 Application::Application(int argc, char **argv) {
     Options::parseFromCommandLine(argc, argv);
