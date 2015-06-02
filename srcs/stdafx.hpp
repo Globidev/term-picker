@@ -12,6 +12,7 @@
 
 // Unix specific
 #include <unistd.h>
+#include <sys/wait.h>
 
 // Aliases
 namespace po = boost::program_options;
