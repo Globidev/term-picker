@@ -71,8 +71,8 @@ namespace curses {
     }
 
     void Display::setupTerm() {
-        outFile = isatty(STDOUT_FILENO) ? stdout : fopen("/dev/tty", "w");
-        inFile = isatty(STDIN_FILENO) ? stdin : fopen("/dev/tty", "r");
+        outFile = fopen("/dev/tty", "w");
+        inFile = fopen("/dev/tty", "r");
 
         screen_ = newterm(nullptr, outFile, inFile);
         updateHeight();
