@@ -10,7 +10,7 @@ Collection::Collection(const std::vector<std::string> & items):
 
     using Push = std::function<void (std::shared_ptr<Item>)>;
     Push push = [&](auto item) {
-        push_back(item);
+        this->push_back(item);
         item->forEachChild(push);
     };
 
