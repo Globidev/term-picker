@@ -16,7 +16,7 @@ struct Item {
     std::size_t level() const;
     Parent parent() const;
 
-    void select();
+    bool select();
     void toggle();
     void deepToggle();
 

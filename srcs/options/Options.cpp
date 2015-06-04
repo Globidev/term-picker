@@ -1,29 +1,32 @@
 #include "Options.hpp"
 
-std::vector<std::string>    Options::items      { };
-bool                        Options::multiple   { false };
-bool                        Options::noEcho     { false };
-std::string                 Options::command    { "" };
-char                        Options::separator  { '/' };
+std::vector<std::string>    Options::items          { };
 bool                        Options::show_tail      { false };
+bool                        Options::multiple       { false };
+bool                        Options::noEcho         { false };
+std::string                 Options::command        { "" };
+char                        Options::separator      { '/' };
+bool                        Options::leaf_selection { false };
 
 static auto getUsage(void) {
     po::options_description usage { "Available options" };
 
     usage.add_options()
-        ("help,h",      "Show this help message")
-        ("items",       po::value(&Options::items),
-                        "Items to pick")
-        ("multiple,m",  po::bool_switch(&Options::multiple),
-                        "Ends the program on the first selection")
-        ("no-echo",     po::bool_switch(&Options::noEcho),
-                        "Do not output selected items")
-        ("command,c",   po::value(&Options::command),
-                        "Command to execute for each selected item")
-        ("separator,s", po::value(&Options::separator),
-                        "The character used to split items into a tree")
+        ("help,h",              "Show this help message")
+        ("items",               po::value(&Options::items),
+                                "Items to pick")
+        ("leaf-selection,l",    po::bool_switch(&Options::leaf_selection),
+                                "Only allows leaf items to be selected")
         ("show-tail,t",         po::bool_switch(&Options::show_tail),
                                 "Only echoes the tail of selected item")
+        ("multiple,m",          po::bool_switch(&Options::multiple),
+                                "Ends the program on the first selection")
+        ("no-echo",             po::bool_switch(&Options::noEcho),
+                                "Do not output selected items")
+        ("command,c",           po::value(&Options::command),
+                                "Command to execute for each selected item")
+        ("separator,s",         po::value(&Options::separator),
+                                "The character used to split items into a tree")
     ;
 
     return usage;

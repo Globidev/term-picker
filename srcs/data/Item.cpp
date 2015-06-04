@@ -35,8 +35,12 @@ Item::Parent Item::parent() const {
     return parent_;
 }
 
-void Item::select() {
-    isSelected_ = !isSelected_;
+bool Item::select() {
+    if (!Options::leaf_selection || childMap_.empty()) {
+        isSelected_ = !isSelected_;
+        return true;
+    }
+    return false;
 }
 
 void Item::toggle() {

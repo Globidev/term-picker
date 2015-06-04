@@ -43,9 +43,9 @@ void Application::run() {
     };
 
     auto select = [&] {
-        collection.current().select();
-        if (!Options::multiple)
-            quit();
+        if (collection.current().select())
+            if (!Options::multiple)
+                quit();
     };
 
     auto resize = [] {
