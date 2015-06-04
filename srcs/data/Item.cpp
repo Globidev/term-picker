@@ -84,7 +84,7 @@ std::shared_ptr<Item> Item::operator[](const std::string & name) {
 }
 
 std::ostream & operator<<(std::ostream & os, const Item & item) {
-    if (Options::tail)
+    if (Options::show_tail)
         os << item.name();
     else {
         if (item.parent())
