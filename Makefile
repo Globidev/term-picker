@@ -20,7 +20,8 @@ LIB_NAMES		=	boost_program_options ncurses
 CFLAGS			=	-Wall -Wextra -Werror -std=c++1z -O3 \
 					$(foreach dir, $(INCLUDE_DIRS), -I $(dir)) \
 					$(foreach define, $(PP_DEFINES), -D $(define))
-LFLAGS			=	$(foreach dir, $(LIB_DIRS), -L $(dir)) \
+LFLAGS			=	-static \
+					$(foreach dir, $(LIB_DIRS), -L $(dir)) \
 					$(foreach name, $(LIB_NAMES), -l$(name))
 
 OBJ_DIR			=	objs
