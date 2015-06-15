@@ -12,8 +12,10 @@ namespace curses {
         setupTerm();
         raw();
         noecho();
+        nodelay(stdscr, true);
         keypad(stdscr, 1);
         curs_set(0);
+        set_escdelay(0);
     }
 
     Display::~Display() {

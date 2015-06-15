@@ -1,8 +1,11 @@
 #include "Application.hpp"
 
 #include "data/Collection.hpp"
+
 #include "curses/Display.hpp"
+
 #include "options/Options.hpp"
+
 #include "tools/exec.hpp"
 
 Application::Application(int argc, char **argv) {
@@ -55,10 +58,15 @@ void Application::run() {
         curses::Display::instance().updateHeight();
     };
 
+    int input { };
     while (running) {
-        curses::Display::show(collection);
 
-        switch (getch()) {
+        if (input != ERR)
+            curses::Display::show(collection);
+
+        input = getch();
+        switch (input) {
+            case 27:
             case 'q':        quit();                            break;
             case ' ':
             case '\n':       select();                          break;
