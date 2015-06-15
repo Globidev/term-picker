@@ -16,6 +16,9 @@ struct Item {
     std::size_t level() const;
     Parent parent() const;
 
+    bool isLeaf() const;
+    ChildMap::size_type childCount() const;
+
     bool select();
     void toggle();
     void deepToggle();

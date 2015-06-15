@@ -2,6 +2,8 @@
 
 #include "data/Collection.hpp"
 
+#include "options/Options.hpp"
+
 namespace curses {
 
     Display::Display():
@@ -62,18 +64,30 @@ namespace curses {
     }
 
     void Display::showItem(const Item & item, bool current) {
-        auto line = std::string(item.level() * 3, ' ') + "|--" + item.name() + "\n";
+        std::string spacing(item.level() * 3, ' ');
+        printw(spacing.c_str());
+
         if (current || item.isSelected())
             attron(A_REVERSE);
-        printw(line.c_str());
-        if (current || item.isSelected())
-            attroff(A_REVERSE);
+        printw("|--");
+        attron(A_BOLD);
+        printw(item.name().c_str());
+        attroff(A_REVERSE | A_BOLD);
+
+        if (!item.isLeaf()) {
+            std::ostringstream childIndicator;
+            childIndicator << "" << Options::separator << ".."
+                           << " (" << item.childCount() << ")";
+            printw(childIndicator.str().c_str());
+        }
+        printw("\n");
     }
 
     void Display::setupTerm() {
-        outFile = isatty(STDOUT_FILENO) ? fopen(ttyname(STDOUT_FILENO), "w") : fopen("/dev/tty", "w");
-        inFile = isatty(STDIN_FILENO) ? fopen(ttyname(STDIN_FILENO), "r") : fopen("/dev/tty", "r");
-
+        outFile = isatty(STDOUT_FILENO) ? fopen(ttyname(STDOUT_FILENO), "w")
+                                        : fopen("/dev/tty", "w");
+        inFile = isatty(STDIN_FILENO) ? fopen(ttyname(STDIN_FILENO), "r")
+                                      : fopen("/dev/tty", "r");
         screen_ = newterm(nullptr, outFile, inFile);
         updateHeight();
     }

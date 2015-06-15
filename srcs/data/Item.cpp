@@ -35,8 +35,16 @@ Item::Parent Item::parent() const {
     return parent_;
 }
 
+bool Item::isLeaf() const {
+    return childMap_.empty();
+}
+
+Item::ChildMap::size_type Item::childCount() const {
+    return childMap_.size();
+}
+
 bool Item::select() {
-    if (!Options::leaf_selection || childMap_.empty()) {
+    if (!Options::leaf_selection || isLeaf()) {
         isSelected_ = !isSelected_;
         return true;
     }
