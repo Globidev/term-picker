@@ -2,20 +2,28 @@
 
 #include "options/Options.hpp"
 
-Collection::Collection(const std::vector<std::string> & items):
+Collection::Collection(const std::vector<std::string> & items, bool tree):
     currentIdx_ { 0 } {
 
-    for (const auto & itemName: items)
-        addItem(itemName);
+    if (tree) {
+        for (const auto & itemName: items)
+            addItem(itemName);
 
-    using Push = std::function<void (std::shared_ptr<Item>)>;
-    Push push = [&](auto item) {
-        this->push_back(item);
-        item->forEachChild(push);
-    };
+        using Push = std::function<void (std::shared_ptr<Item>)>;
+        Push push = [&](auto item) {
+            this->push_back(item);
+            item->forEachChild(push);
+        };
 
-    for (auto itemPair: topLevelItems_)
-        push(itemPair.second);
+        for (auto itemPair: topLevelItems_)
+            push(itemPair.second);
+    }
+    else {
+        for (const auto & itemName: items) {
+            auto inserted = topLevelItems_.emplace(itemName, std::make_shared<Item>(itemName));
+            push_back(inserted.first->second);
+        }
+    }
 }
 
 Collection::size_type Collection::currentIndex() const {

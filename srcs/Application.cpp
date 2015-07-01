@@ -6,6 +6,7 @@
 
 #include "options/Options.hpp"
 
+#include "tools/levenshtein.hpp"
 #include "tools/exec.hpp"
 
 Application::Application(int argc, char **argv) {
@@ -35,6 +36,8 @@ static void executeSelected(const Collection & collection) {
 void Application::run() {
     bool running = true;
     Collection collection { Options::items };
+    Collection filtered { Options::items, false };
+    std::reference_wrapper<Collection> current = collection;
 
     auto quit = [&] {
         curses::Display::quit();
@@ -59,24 +62,64 @@ void Application::run() {
     };
 
     int input { };
+    bool queryMode { };
+    std::string query;
+
     while (running) {
 
         if (input != ERR)
-            curses::Display::show(collection);
+            curses::Display::show(current);
 
         input = getch();
-        switch (input) {
-            case 27:
-            case 'q':        quit();                            break;
-            case ' ':
-            case '\n':       select();                          break;
-            case KEY_UP:     collection.previous();             break;
-            case KEY_DOWN:   collection.next();                 break;
-            case KEY_RIGHT:  collection.current().toggle();     break;
-            case 'e':        collection.current().deepToggle(); break;
-            case KEY_RESIZE: resize();                          break;
-            default:                                            break;
+        if (queryMode) {
+            if (input != ERR) {
+                switch (input) {
+                    case 27:
+                        query.clear();
+                        current = collection;
+                        queryMode = false;
+                        break;
+                    default:
+                        query += input;
+                        auto score = [&](const auto & s1) {
+                            auto ld = levenshtein_distance(s1, query);
+                            auto l = std::max(s1.size(), query.size());
+                            return 1. - (double)ld / l;
+                        };
+                        auto distance = [&](const auto & s1, const auto & s2) {
+                            return score(s1) > score(s2);
+                        };
+                        std::vector<std::string> items;
+                        std::sort(
+                            Options::items.begin(),
+                            Options::items.end(),
+                            distance
+                        );
+                        // for (auto item: Options::items) {
+                        //
+                        // }
+                        // items.insert(items.begin(), query);
+                        // for (auto & item: items)
+                            // item += std::to_string(levenshtein_distance(item, query));
+                        filtered = Collection { Options::items, false };
+                        break;
+                }
+            }
         }
-
+        else {
+            switch (input) {
+                case 27:
+                case 'q':        quit();                            break;
+                case ' ':
+                case '\n':       select();                          break;
+                case KEY_UP:     collection.previous();             break;
+                case KEY_DOWN:   collection.next();                 break;
+                case KEY_RIGHT:  collection.current().toggle();     break;
+                case 'e':        collection.current().deepToggle(); break;
+                case KEY_RESIZE: resize();                          break;
+                case '/':        current = filtered; queryMode = true;  break;
+                default:                                            break;
+            }
+        }
     }
 }
